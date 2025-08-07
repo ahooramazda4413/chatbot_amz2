@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>amz chatbot</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
+body {
+margin: 0; padding: 0;
+background: #111;
+color: #d4af37;
+font-family: 'Vazir', Tahoma, sans-serif;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+}
+header {
+background: #000;
+padding: 1rem 2rem;
+text-align: center;
+font-size: 1.8rem;
+font-weight: 900;
+letter-spacing: 3px;
+text-shadow: 0 0 8px #d4af37aa;
+}
+main {
+flex: 1;
+padding: 15px 10px 60px;
+max-width: 900px;
+margin: 0 auto;
+}
+section {
+background: #222;
+margin-bottom: 20px;
+border-radius: 10px;
+box-shadow: 0 0 12px #d4af3733;
+padding: 15px 20px;
+transition: box-shadow 0.3s ease;
+}
+section:hover {
+box-shadow: 0 0 18px #d4af37ee;
+}
+h2 {
+margin: 0 0 10px;
+font-size: 1.4rem;
+border-bottom: 2px solid #d4af37;
+padding-bottom: 6px;
+}
+p.desc {
+margin: 0 0 10px;
+color: #f0e68c;
+}
+label {
+display: block;
+margin: 6px 0 4px;
+font-weight: bold;
+}
+input[type=text], select, textarea {
+width: 100%;
+padding: 8px 12px;
+border-radius: 5px;
+border: none;
+background: #333;
+color: #d4af37;
+font-size: 1rem;
+resize: vertical;
+}
+textarea {
+min-height: 60px;
+}
+button {
+background: #d4af37;
+border: none;
+color: #111;
+font-weight: 900;
+font-size: 1.1rem;
+padding: 10px 15px;
+border-radius: 7px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+margin-top: 10px;
+box-shadow: 0 0 12px #d4af37aa;
+}
+button:hover {
+background: #b38f1a;
+}
+.response {
+margin-top: 12px;
+background: #000;
+color: #d4af37;
+padding: 12px;
+border-radius: 7px;
+font-size: 0.95rem;
+white-space: pre-wrap;
+box-shadow: inset 0 0 10px #d4af37bb;
+min-height: 50px;
+}
+footer {
+background: #000;
+text-align: center;
+padding: 12px 0;
+font-size: 0.9rem;
+font-weight: 600;
+letter-spacing: 2px;
+color: #d4af37cc;
+box-shadow: 0 -4px 15px #d4af37aa inset;
+}
+a {
+color: #d4af37;
+text-decoration: none;
+}
+a:hover {
+text-decoration: underline;
+}
+</style>
+</head>
+<body>
+<header>amz chatbot</header>
+<main>
+
+<!-- Voice Changer -->
+<section id="voiceChanger">
+<h2>🎤 وب‌سرویس تغییر و تقلید صدا</h2>
+<p class="desc">
+برای تغییر صدا، متن را در کادر وارد کنید و از منوی شخصیت، تقلید صدای مورد نظر را انتخاب کنید.<br />
+محدودیت: فقط 60 ثانیه صوت تبدیل می‌شود.
+</p>
+<label for="voiceText">متن صدا (متن ساده)</label>
+<textarea id="voiceText" placeholder="متن مورد نظر برای تبدیل به صدا..."></textarea>
+<label for="voiceSpeaker">شخصیت تقلید صدا</label>
+<select id="voiceSpeaker">
+<option value="Ataran">رضا عطاران</option>
+<option value="Leyla.Hatami">لیلا حاتمی</option>
+<option value="Peyman.Yousefi">پیمان یوسفی</option>
+<option value="Javad.Ezzati">جواد عزتی</option>
+<option value="Hayayi">امین حیایی</option>
+<option value="Hootan.Shakiba">هوتن شکیبا</option>
+<option value="Adel">عادل فردوسی پور</option>
+<option value="Mohammadzadeh">محمدزاده</option>
+<option value="Izadyar">ایزدیار</option>
+<option value="Shahab.Hosseini">شهاب حسینی</option>
+<option value="Mohsen.Yeghane">محسن یگانه</option>
+<option value="Chavoshi">محسن چاوشی</option>
+<option value="Akbar.Abdi">اکبر عبدی</option>
+<option value="Part.Speaker.Nouraei">نورائی</option>
+<option value="Part.Speaker.Kiani">کیانی</option>
+<option value="Part.Speaker.Pune">پونه</option>
+<option value="Part.Speaker.Bahar">بهار</option>
+</select>
+<button onclick="callVoiceChanger()">تغییر صدا</button>
+<div class="response" id="voiceChangerResponse"></div>
+</section>
+
+<!-- Face Swap -->
+<section id="faceSwap">
+<h2>🖼️ وب‌سرویس تعویض چهره</h2>
+<p class="desc">
+لینک عکس هدف و عکس چهره را وارد کنید (فرمت‌ها: jpeg, png).<br />
+چهره عکس دوم روی عکس اول قرار می‌گیرد.
+</p>
+<label for="targetImage">لینک عکس هدف</label>
+<input type="text" id="targetImage" placeholder="لینک عکس هدف (target)" />
+<label for="faceImage">لینک عکس چهره</label>
+<input type="text" id="faceImage" placeholder="لینک عکس چهره (face)" />
+<button onclick="callFaceSwap()">تعویض چهره</button>
+<div class="response" id="faceSwapResponse"></div>
+</section>
+
+<!-- Credit Card Generator -->
+<section id="creditCard">
+<h2>💳 وب‌سرویس تولید کردیت کارت</h2>
+<p class="desc">
+نوع کارت را انتخاب کنید (Visa, MasterCard, AmericanExpress, JCB)
+</p>
+<select id="cardType">
+<option value="MasterCard">MasterCard</option>
+<option value="Visa">Visa</option>
+<option value="AmericanExpress">AmericanExpress</option>
+<option value="JCB">JCB</option>
+</select>
+<button onclick="callCreditCard()">تولید کردیت کارت</button>
+<div class="response" id="creditCardResponse"></div>
+</section>
+
+<!-- Copilot Chat with Save -->
+<section id="copilotSaveChat">
+<h2>🤖 وب‌سرویس کوپایلت با قابلیت ذخیره چت</h2>
+<p class="desc">
+ابتدا چت جدید ایجاد کنید، سپس سوال خود را بپرسید.<br />
+شناسه چت دریافت شده را ذخیره کنید تا از ادامه گفتگو استفاده کنید.
+</p>
+<button onclick="createNewChat()">ایجاد چت جدید</button>
+<p>Chat ID: <span id="copilotChatId" style="color:#ffda56;">---</span></p>
+<label for="copilotQuestion">سوال شما</label>
+<input type="text" id="copilotQuestion" placeholder="سوال خود را اینجا بنویسید" />
+<button onclick="sendCopilotQuestion()">ارسال سوال</button>
+<div class="response" id="copilotResponse"></div>
+</section>
+
+<!-- Bourse Stock Info -->
+<section id="bourse">
+<h2>📈 وب‌سرویس بورس ایران</h2>
+<p class="desc">
+جستجو نماد یا مشاهده لیست نمادها و اطلاعات کامل سهام
+</p>
+<label for="bourseSymbol">جستجو نماد (مثلاً خودرو)</label>
+<input type="text" id="bourseSymbol" placeholder="نماد را وارد کنید" />
+<button onclick="searchBourse()">جستجو</button>
+<button onclick="listStocks()">لیست همه نمادها</button>
+<button onclick="lastTradingDay()">آخرین روز معاملاتی</button>
+<div class="response" id="bourseResponse"></div>
+</section>
+
+<!-- News Latest -->
+<section id="newsDagh">
+<h2>📰 وب‌سرویس اخبار داغ</h2>
+<p class="desc">
+مشاهده آخرین اخبار، جستجو و فیلتر بر اساس تگ
+</p>
+<label for="newsTag">فیلتر بر اساس تگ (مثلاً اخبار_سیاسی)</label>
+<input type="text" id="newsTag" placeholder="تگ مورد نظر را وارد کنید" />
+<label for="newsSearch">جستجوی خبر (مثلاً ترامپ)</label>
+<input type="text" id="newsSearch" placeholder="کلمه کلیدی خبر را وارد کنید" />
+<button onclick="getLatestNews()">اخبار آخر</button>
+<button onclick="getNewsByTag()">اخبار بر اساس تگ</button>
+<button onclick="searchNews()">جستجوی خبر</button>
+<div class="response" id="newsResponse"></div>
+</section>
+
+<!-- Music Finder -->
+<section id="musicFinder">
+<h2>🎵 وب‌سرویس موزیک یاب</h2>
+<p class="desc">
+پیدا کردن آهنگ از لینک موزیک یا ریلز اینستاگرام
+</p>
+<label for="musicUrl">لینک موزیک یا ریلز</label>
+<input type="text" id="musicUrl" placeholder="لینک موزیک mp3 یا ریلز اینستا" />
+<button onclick="findMusic()">پیدا کردن آهنگ</button>
+<div class="response" id="musicResponse"></div>
+</section>
+
+<!-- SEO AI Assistant -->
+<section id="seoAI">
+<h2>🔍 وب‌سرویس دستیار هوش مصنوعی سئو</h2>
+<p class="desc">
+تولید عنوان، توضیحات و کلیدواژه برای موضوع سایت یا پست
+</p>
+<label for="seoSubject">موضوع سایت</label>
+<input type="text" id="seoSubject" placeholder="موضوع سایت یا مقاله" />
+<label for="seoTitle">موضوع پست</label>
+<input type="text" id="seoTitle" placeholder="موضوع پست" />
+<button onclick="callSeoAI()">تولید محتوا</button>
+<div class="response" id="seoResponse"></div>
+</section>
+
+<!-- Harassment Caller ID -->
+<section id="callerID">
+<h2>📞 وب‌سرویس مزاحم‌یاب</h2>
+<p class="desc">
+جستجوی شماره موبایل یا نام برای شناسایی مزاحم
+</p>
+<label for="callerPhone">شماره موبایل (با صفر شروع)</label>
+<input type="text" id="callerPhone" placeholder="مثلاً 09123456789" />
+<label for="callerName">یا جستجو با نام</label>
+<input type="text" id="callerName" placeholder="مثلاً مجید" />
+<button onclick="searchByPhone()">جستجو با شماره</button>
+<button onclick="searchByName()">جستجو با نام</button>
+<div class="response" id="callerResponse"></div>
+</section>
+
+<!-- Instagram Downloader -->
+<section id="instagramDownloader">
+<h2>📥 وب‌سرویس دانلودر اینستاگرام</h2>
+<p class="desc">
+دانلود پست، ریلز، استوری، پروفایل و هایلایت اینستاگرام
+</p>
+<label for="instaUrl">لینک پست/ریلز/استوری/هایلایت</label>
+<input type="text" id="instaUrl" placeholder="مثلاً https://www.instagram.com/p/..." />
+<label for="instaOut">نوع خروجی (file یا url)</label>
+<select id="instaOut">
+<option value="url">لینک و مشخصات</option>
+<option value="file">فایل دانلود</option>
+</select>
+<button onclick="downloadInsta()">دانلود</button>
+<div class="response" id="instaResponse"></div>
+</section>
+
+<!-- ChatGPT Free -->
+<section id="chatGPTfree">
+<h2>💬 چت هوش مصنوعی GPT-3.5 (رایگان)</h2>
+<p class="desc">
+سوال خود را وارد کنید، پاسخ سریع و رایگان دریافت کنید
+</p>
+<textarea id="chatGPTfreeInput" placeholder="سوال خود را اینجا بنویسید..."></textarea>
+<button onclick="callChatGPTfree()">ارسال سوال</button>
+<div class="response" id="chatGPTfreeResponse"></div>
+</section>
+
+<!-- ChatGPT GPT-4 -->
+<section id="chatGPT4">
+<h2>💬 چت هوش مصنوعی GPT-4</h2>
+<p class="desc">
+چت با مدل GPT-4 با پاسخ‌های حرفه‌ای و کامل
+</p>
+<textarea id="chatGPT4Input" placeholder="سوال خود را اینجا بنویسید..."></textarea>
+<button onclick="callChatGPT4()">ارسال سوال</button>
+<div class="response" id="chatGPT4Response"></div>
+</section>
+
+</main>
+<footer>Created by Ahoora &amp; ChatGPT</footer>
+
+<script>
+const token = 'gccdcr8lhuhizp6:X0cq0GZxcFGwWg9dn2Fk';
+
+function handleResponse(container, data) {
+if (!data) {
+container.textContent = 'خطا: پاسخ دریافت نشد';
+return;
+}
+if (typeof data === 'string') {
+container.textContent = data;
+} else if (data.error) {
+container.textContent = 'خطا: ' + data.error;
+} else {
+container.textContent = JSON.stringify(data, null, 2);
+}
+}
+
+// --- Voice Changer ---
+async function callVoiceChanger() {
+const text = document.getElementById('voiceText').value.trim();
+const speaker = document.getElementById('voiceSpeaker').value;
+const resDiv = document.getElementById('voiceChangerResponse');
+if (!text) {
+resDiv.textContent = 'لطفا متن را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال پردازش...';
+try {
+const res = await fetch(`https://api.majidapi.ir/voice/change?text=${encodeURIComponent(text)}&speaker=${encodeURIComponent(speaker)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- Face Swap ---
+async function callFaceSwap() {
+const target = document.getElementById('targetImage').value.trim();
+const face = document.getElementById('faceImage').value.trim();
+const resDiv = document.getElementById('faceSwapResponse');
+if (!target || !face) {
+resDiv.textContent = 'لطفا هر دو لینک عکس را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال پردازش...';
+try {
+const res = await fetch(`https://api.majidapi.ir/face/swap?target=${encodeURIComponent(target)}&face=${encodeURIComponent(face)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- Credit Card Generator ---
+async function callCreditCard() {
+const type = document.getElementById('cardType').value;
+const resDiv = document.getElementById('creditCardResponse');
+resDiv.textContent = 'در حال پردازش...';
+try {
+const res = await fetch(`https://api.majidapi.ir/creditcard/generate?type=${encodeURIComponent(type)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- Copilot Chat with Save ---
+let chatId = '';
+async function createNewChat() {
+const resDiv = document.getElementById('copilotResponse');
+resDiv.textContent = 'در حال ایجاد چت جدید...';
+try {
+const res = await fetch(`https://api.majidapi.ir/ai/copilot/new?token=${token}`);
+const data = await res.json();
+if (data.id) {
+chatId = data.id;
+document.getElementById('copilotChatId').textContent = chatId;
+resDiv.textContent = 'چت جدید ایجاد شد، سوال بپرسید.';
+} else {
+resDiv.textContent = 'خطا در ایجاد چت';
+}
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+async function sendCopilotQuestion() {
+const question = document.getElementById('copilotQuestion').value.trim();
+const resDiv = document.getElementById('copilotResponse');
+if (!chatId) {
+resDiv.textContent = 'لطفا ابتدا چت جدید ایجاد کنید';
+return;
+}
+if (!question) {
+resDiv.textContent = 'لطفا سوال را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال ارسال سوال...';
+try {
+const res = await fetch(`https://api.majidapi.ir/ai/copilot?chatId=${encodeURIComponent(chatId)}&q=${encodeURIComponent(question)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- Bourse Stock Info ---
+async function searchBourse() {
+const symbol = document.getElementById('bourseSymbol').value.trim();
+const resDiv = document.getElementById('bourseResponse');
+if (!symbol) {
+resDiv.textContent = 'لطفا نماد را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال جستجو...';
+try {
+const res = await fetch(`https://api.majidapi.ir/bourse/search?search=${encodeURIComponent(symbol)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+async function listStocks() {
+const resDiv = document.getElementById('bourseResponse');
+resDiv.textContent = 'در حال دریافت لیست نمادها...';
+try {
+const res = await fetch(`https://api.majidapi.ir/bourse/list?token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+async function lastTradingDay() {
+const resDiv = document.getElementById('bourseResponse');
+resDiv.textContent = 'در حال دریافت آخرین روز معاملاتی...';
+try {
+const res = await fetch(`https://api.majidapi.ir/bourse/last?token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- News Latest ---
+async function getLatestNews() {
+const resDiv = document.getElementById('newsResponse');
+resDiv.textContent = 'در حال دریافت اخبار...';
+try {
+const res = await fetch(`https://api.majidapi.ir/news/latest?token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+async function getNewsByTag() {
+const tag = document.getElementById('newsTag').value.trim();
+const resDiv = document.getElementById('newsResponse');
+if (!tag) {
+resDiv.textContent = 'لطفا تگ را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال دریافت اخبار بر اساس تگ...';
+try {
+const res = await fetch(`https://api.majidapi.ir/news/tag?tag=${encodeURIComponent(tag)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+async function searchNews() {
+const keyword = document.getElementById('newsSearch').value.trim();
+const resDiv = document.getElementById('newsResponse');
+if (!keyword) {
+resDiv.textContent = 'لطفا کلمه کلیدی را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال جستجو...';
+try {
+const res = await fetch(`https://api.majidapi.ir/news/search?search=${encodeURIComponent(keyword)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- Music Finder ---
+async function findMusic() {
+const url = document.getElementById('musicUrl').value.trim();
+const resDiv = document.getElementById('musicResponse');
+if (!url) {
+resDiv.textContent = 'لطفا لینک موزیک یا ریلز را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال جستجو...';
+try {
+const res = await fetch(`https://api.majidapi.ir/musiccloud/find?url=${encodeURIComponent(url)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- SEO AI Assistant ---
+async function callSeoAI() {
+const subject = document.getElementById('seoSubject').value.trim();
+const title = document.getElementById('seoTitle').value.trim();
+const resDiv = document.getElementById('seoResponse');
+if (!subject || !title) {
+resDiv.textContent = 'لطفا موضوع سایت و موضوع پست را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال تولید محتوا...';
+try {
+const res = await fetch(`https://api.majidapi.ir/ai/seo?title=${encodeURIComponent(title)}&site=${encodeURIComponent(subject)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- Harassment Caller ID ---
+async function searchByPhone() {
+const phone = document.getElementById('callerPhone').value.trim();
+const resDiv = document.getElementById('callerResponse');
+if (!phone) {
+resDiv.textContent = 'لطفا شماره موبایل را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال جستجو...';
+try {
+const res = await fetch(`https://api.majidapi.ir/inquiry/numberbook?action=phone&phone=${encodeURIComponent(phone)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+async function searchByName() {
+const name = document.getElementById('callerName').value.trim();
+const resDiv = document.getElementById('callerResponse');
+if (!name) {
+resDiv.textContent = 'لطفا نام را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال جستجو...';
+try {
+const res = await fetch(`https://api.majidapi.ir/inquiry/numberbook?action=name&name=${encodeURIComponent(name)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- Instagram Downloader ---
+async function downloadInsta() {
+const url = document.getElementById('instaUrl').value.trim();
+const out = document.getElementById('instaOut').value;
+const resDiv = document.getElementById('instaResponse');
+if (!url) {
+resDiv.textContent = 'لطفا لینک اینستاگرام را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال دریافت...';
+try {
+const res = await fetch(`https://api.majidapi.ir/instagram/download?url=${encodeURIComponent(url)}&out=${encodeURIComponent(out)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- ChatGPT Free (GPT-3.5) ---
+async function callChatGPTfree() {
+const prompt = document.getElementById('chatGPTfreeInput').value.trim();
+const resDiv = document.getElementById('chatGPTfreeResponse');
+if (!prompt) {
+resDiv.textContent = 'لطفا سوال را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال پاسخگویی...';
+try {
+const res = await fetch(`https://api.majidapi.ir/ai/chatgpt?model=gpt-3.5-turbo&q=${encodeURIComponent(prompt)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+
+// --- ChatGPT GPT-4 ---
+async function callChatGPT4() {
+const prompt = document.getElementById('chatGPT4Input').value.trim();
+const resDiv = document.getElementById('chatGPT4Response');
+if (!prompt) {
+resDiv.textContent = 'لطفا سوال را وارد کنید';
+return;
+}
+resDiv.textContent = 'در حال پاسخگویی...';
+try {
+const res = await fetch(`https://api.majidapi.ir/ai/chatgpt?model=gpt-4&q=${encodeURIComponent(prompt)}&token=${token}`);
+const data = await res.json();
+handleResponse(resDiv, data);
+} catch {
+resDiv.textContent = 'خطا در اتصال به سرور';
+}
+}
+</script>
+
+</body>
+</html>
